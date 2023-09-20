@@ -1,28 +1,27 @@
+from typing import Any, Dict, Union
+
 import gradio as gr
-import requests
-import tensorflow as tf
+import numpy as np
+from PIL import Image
 
-inception_net = tf.keras.applications.MobileNetV2()
+from app import load_model, predict, preprocess_image  # import necessary functions
 
-# Download human-readable labels for ImageNet.
-response = requests.get("https://git.io/JJkYN")
-labels = response.text.split("\n")
+model, labels = load_model()  # Use the function from app.py
 
 
-def classify_image(inp):
-    inp = inp.reshape((-1, 224, 224, 3))
-    inp = tf.keras.applications.mobilenet_v2.preprocess_input(inp)
-    prediction = inception_net.predict(inp).flatten()
-    confidences = {labels[i]: float(prediction[i]) for i in range(1000)}
-    return confidences
+def classify_image(inp: Union[np.ndarray, Any]) -> Dict[str, float]:
+    image = Image.fromarray(np.uint8(inp)).convert("RGB")
+    x = preprocess_image(image)  # Use the function from app.py
+    predictions = predict(x)  # Use the function from app.py
+    return predictions
 
 
 gr.Interface(
     fn=classify_image,
     inputs=gr.Image(
-        shape=(224, 224), source="webcam", label="Upload Image or Capture from Webcam"
+        shape=(224, 224), source="upload", label="Upload Image for Classification"
     ),
     outputs=gr.Label(num_top_classes=3, label="Predicted Class"),
-    examples=["/Users/nthiebaut/Downloads/image.jpg"],
+    examples=["/Users/harrison/Desktop/msds/msds_fall23/MLops/apple_pie.jpg"],
     live=False,
 ).launch()
