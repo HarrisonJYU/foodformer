@@ -42,7 +42,7 @@ jobs:
           restore-keys: ${{ runner.os }}-docker-
 
       - name: Weights&biases 
-        run: wandb login --relogin --api-key ${{ secrets.WANDB_API_KEY }}
+        run: wandb login ${{ secrets.WANDB_API_KEY }}
       #   with:
       #     WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
