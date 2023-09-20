@@ -25,10 +25,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Weights&biases 
-        uses: machine-learning-apps/wandb-action@master
-        with:
-          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+      # - name: Weights&biases 
+      #   uses: machine-learning-apps/wandb-action@master
+      #   with:
+      #     WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
