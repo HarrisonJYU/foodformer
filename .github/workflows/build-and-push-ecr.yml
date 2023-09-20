@@ -8,7 +8,7 @@ on:
 env:
   AWS_REGION: us-east-2                       # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: foodformer                  # set this to your Amazon ECR repository name
-  # ECS_SERVICE: foodformer-ecs-service         # set this to your Amazon ECS service name
+  ECS_SERVICE: foodformer-ecs-service         # set this to your Amazon ECS service name
   ECS_CLUSTER: foodformer-ecs-cluster         # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: foodformer-ecs-task-definition-1      # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
@@ -26,9 +26,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.TOKEN_GITHUB }}
-        
-      # - name: Weights&biases 
-      #   uses: machine-learning-apps/wandb-action@master
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/docker-save
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-docker-
+
+      - name: Weights&biases 
+        run: wandb login --relogin --api-key ${{ secrets.WANDB_API_KEY }}
       #   with:
       #     WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
@@ -67,7 +81,7 @@ jobs:
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
