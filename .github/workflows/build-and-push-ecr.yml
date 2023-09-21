@@ -41,6 +41,12 @@ jobs:
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: ${{ runner.os }}-docker-
 
+      - name: Login to Weights&biases 
+        shell: bash
+        env: # wandb api key
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        run: wandb login "$WANDB_API_KEY"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -64,11 +70,6 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Login to Weights&biases 
-        run: wandb login ${{ secrets.WANDB_API_KEY }}
-      #   with:
-      #     WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
