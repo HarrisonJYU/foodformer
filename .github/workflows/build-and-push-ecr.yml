@@ -40,14 +40,14 @@ jobs:
 
       - name: Cache Docker layers
         uses: actions/cache@v3
-        # with:
-        #   path: /tmp/docker-save
-        #   key: ${{ runner.os }}-docker-${{ github.sha }}
-        #   restore-keys: ${{ runner.os }}-docker-
-            path: ~/.cache/pip
-            key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-            restore-keys: |
-              ${{ runner.os }}-pip-
+        with:
+          # path: /tmp/docker-save
+          # key: ${{ runner.os }}-docker-${{ github.sha }}
+          # restore-keys: ${{ runner.os }}-docker-
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install Weights & Biases
         run: pip install wandb
