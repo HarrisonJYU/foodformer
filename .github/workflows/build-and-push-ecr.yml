@@ -2,11 +2,12 @@ name: Build-and-Push-to-ECR
 
 on:
   push:
+    paths-ignore:
+      - '**/README'
+      - '**/train.ipynb'
+      - '.github/workflows/build-and-push-ecr.yml'
     branches:
       - main
-    paths-ignore:
-      - '**/README.md'
-      - '**/train.ipynb'
 
 env:
   AWS_REGION: us-east-2                       # set this to your preferred AWS region, e.g. us-west-1
