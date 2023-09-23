@@ -3,6 +3,8 @@
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-31011/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/harrisonJYU/foodformer)
 
+A end-to-end ViT model using HuggingFace, PyTorch, AWS (ECS, Fargate, ECR), FastAPI, Docker and Gradio
+
 ## Development
 
 To setup this repo locally, create a virtual environment (e.g. with [PyEnv](https://github.com/pyenv/pyenv)):
