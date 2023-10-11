@@ -1,39 +1,30 @@
-# import base64
-import io
-from typing import Any, Dict, Union
+from typing import Dict
 
 import gradio as gr
-import numpy as np
 import requests
-from PIL import Image
-
-# from app import load_model, predict, preprocess_image  # import necessary functions
 
 # model, labels = load_model()  # Use the function from app.py
 
 
-def classify_image(inp: Union[np.ndarray, Any]) -> Dict[str, float]:
-    image = Image.fromarray(np.uint8(inp)).convert("RGB")
-    # x = preprocess_image(image)  # Use the function from app.py
-    buffered = io.BytesIO()
-    image.save(buffered, format="JPEG")
-
-    # Make the API request
-    response = requests.post(
-        "http://127.0.0.1:8000/predict",
-        files={"file": ("image.jpg", buffered, "image/jpeg")},
-    )
+def classify_image(filepath: str) -> Dict[str, float]:
+    with open(filepath, "rb") as f:
+        # Make the API request
+        response = requests.post("http://18.225.9.52/predict", files={"file": f})
     predictions = response.json()["predictions"]
     print(predictions)
+    print(list(predictions.keys())[0])
+    print(list(predictions.values())[0])
     return predictions
 
 
 gr.Interface(
     fn=classify_image,
     inputs=gr.Image(
-        shape=(224, 224), source="upload", label="Upload Image for Classification"
+        shape=(224, 224),
+        source="upload",
+        label="Upload Image for Classification",
+        type="filepath",
     ),
     outputs=gr.Label(num_top_classes=3, label="Predicted Class"),
-    examples=["/Users/harrison/Desktop/msds/msds_fall23/MLops/apple_pie.jpg"],
     live=False,
 ).launch()
