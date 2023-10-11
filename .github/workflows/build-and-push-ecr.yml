@@ -14,8 +14,8 @@ env:
   ECR_REPOSITORY: foodformer                  # set this to your Amazon ECR repository name
   ECS_SERVICE: foodformer-ecs-service         # set this to your Amazon ECS service name
   ECS_CLUSTER: foodformer-ecs-cluster         # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: .aws/foodformer-ecs-task-definition-1-revision1.json    # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
+  # ECS_TASK_DEFINITION: .aws/foodformer-ecs-task-definition-1-revision1.json    # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION: foodformer-ecs-task-definition-1     # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: foodformer-container-1       # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 
@@ -44,7 +44,6 @@ jobs:
           path: /tmp/docker-save
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: ${{ runner.os }}-docker-
-
 
       - name: Install Weights & Biases
         run: pip install wandb
@@ -79,13 +78,19 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          # task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+          # image: ${{ steps.build-image.outputs.image }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
