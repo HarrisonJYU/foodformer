@@ -1,18 +1,30 @@
+# import base64
+import io
 from typing import Any, Dict, Union
 
 import gradio as gr
 import numpy as np
+import requests
 from PIL import Image
 
-from app import load_model, predict, preprocess_image  # import necessary functions
+# from app import load_model, predict, preprocess_image  # import necessary functions
 
-model, labels = load_model()  # Use the function from app.py
+# model, labels = load_model()  # Use the function from app.py
 
 
 def classify_image(inp: Union[np.ndarray, Any]) -> Dict[str, float]:
     image = Image.fromarray(np.uint8(inp)).convert("RGB")
-    x = preprocess_image(image)  # Use the function from app.py
-    predictions = predict(x)  # Use the function from app.py
+    # x = preprocess_image(image)  # Use the function from app.py
+    buffered = io.BytesIO()
+    image.save(buffered, format="JPEG")
+
+    # Make the API request
+    response = requests.post(
+        "http://127.0.0.1:8000/predict",
+        files={"file": ("image.jpg", buffered, "image/jpeg")},
+    )
+    predictions = response.json()["predictions"]
+    print(predictions)
     return predictions
 
 
