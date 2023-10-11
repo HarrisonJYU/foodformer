@@ -9,7 +9,7 @@ import requests
 def classify_image(filepath: str) -> Dict[str, float]:
     with open(filepath, "rb") as f:
         # Make the API request
-        response = requests.post("http://18.225.9.52/predict", files={"file": f})
+        response = requests.post("http://18.220.109.92/predict", files={"file": f})
     predictions = response.json()["predictions"]
     print(predictions)
     print(list(predictions.keys())[0])
