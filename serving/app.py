@@ -82,7 +82,7 @@ async def predict_api(file: UploadFile = File(...)) -> ClassPredictions:
     image = read_imagefile(await file.read())
     x = preprocess_image(image)
     predictions = predict(x)
-
+    # logger for Grafana
     log = {
         "message": f"Predictions for {file.filename}: {predictions}",
         "top_class": list(predictions.keys())[0],
