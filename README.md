@@ -1,4 +1,4 @@
-# MSDS - MLOps Class Project - Foodformer <img src="./images/foodformer_logo.jpeg" alt="foodformer_logo" width="20"/>
+# Foodformer - A MLOps Project <img src="./images/foodformer_logo.jpeg" alt="foodformer_logo" width="20"/>
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-31011/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/harrisonJYU/foodformer)
